@@ -40,10 +40,8 @@ extern int scanner();
 void mostrar(int);
 int esPalabraReservada();
 
-FILE *f;
+
 extern char lexema[80];
-
-
 
 int scanner()
 {

@@ -3,6 +3,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#include "lexer.cpp"
+
 void asignacion();
 void expresion();
 void termino();

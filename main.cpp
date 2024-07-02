@@ -6,6 +6,8 @@
 #include "lexer.cpp"
 #include "parser.cpp"
 
+FILE *f;
+
 int main(int n, char *pal[])
 {
     int token;
@@ -29,6 +31,6 @@ int main(int n, char *pal[])
 
     if (f != stdin) // Si la entrada fue de un archivo
         fclose(f); // Entonces cerrar el archivo.
-        
+
     return 0;
 }
