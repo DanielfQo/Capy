@@ -36,38 +36,14 @@
 #define MULT '*'
 #define DIV '/'
 
-int scanner();
+extern int scanner();
 void mostrar(int);
 int esPalabraReservada();
 
 FILE *f;
-char lexema[80];
+extern char lexema[80];
 
-int main(int n, char *pal[])
-{
-    int token;
-    f = stdin; // Entrada estándar del teclado
-    if (n == 2) // Si se especificó un archivo de lectura
-    {
-        f = fopen(pal[1], "rt"); // Lectura modo texto
-        if (f == NULL)
-            f = stdin;
-    }
-    if (f == stdin) // La lectura será desde la entrada estándar
-        printf("Ingrese texto ........ termine con Ctrl z \n");
 
-    while (1)
-    {
-        token = scanner();
-        if (token == EOF)
-            break;
-        mostrar(token);
-    }
-
-    if (f != stdin) // Si la entrada fue de un archivo
-        fclose(f); // Entonces cerrar el archivo.
-    return 0;
-}
 
 int scanner()
 {
@@ -75,7 +51,7 @@ int scanner()
     int i;
     do
         c = fgetc(f);
-    while (isspace(c)); // Ignora blancos
+    while (isspace(c));
 
     if (c == EOF)
         return EOF;
