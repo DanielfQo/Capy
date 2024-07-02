@@ -1,17 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <stdbool.h>
+#include "parser.h"
 
-#include "lexer.cpp"
-
-void asignacion();
-void expresion();
-void termino();
-void factor();
-void numero();
-void digito();
-void error();
 
 void asignacion() {
     if (scanner() != ID) error();  
@@ -42,7 +30,6 @@ void termino() {
         factor();
     }
 }
-
 
 void factor() {
     int token = scanner();

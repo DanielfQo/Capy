@@ -3,8 +3,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#include "lexer.cpp"
-#include "parser.cpp"
+#include "lexer.h"
+#include "parser.h"
 
 FILE *f;
 
@@ -21,9 +21,15 @@ int main(int n, char *pal[])
     if (f == stdin) // La lectura será desde la entrada estándar
         printf("Ingrese texto ........ termine con Ctrl z \n");
 
+    int c
+
     while (1)
     {
-        token = scanner();
+        do
+            c = fgetc(f);
+        while (isspace(c));
+
+        token = scanner(c);
         if (token == EOF)
             break;
         mostrar(token);
