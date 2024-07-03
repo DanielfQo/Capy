@@ -1,5 +1,8 @@
 #include "lexer.h"
 
+
+char lexema[80]; // Definición del arreglo lexema
+
 int scanner(int c){
     int i;
     

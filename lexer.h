@@ -44,7 +44,7 @@ void mostrar(int);
 int esPalabraReservada();
 
 
-
+extern FILE *f;
 extern char lexema[80];
 
 #endif

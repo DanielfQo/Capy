@@ -4,8 +4,6 @@
 #include <stdbool.h>
 
 #include "lexer.h"
-#include "parser.h"
-
 FILE *f;
 
 int main(int n, char *pal[])
@@ -21,7 +19,7 @@ int main(int n, char *pal[])
     if (f == stdin) // La lectura será desde la entrada estándar
         printf("Ingrese texto ........ termine con Ctrl z \n");
 
-    int c
+    int c;
 
     while (1)
     {
