@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.15)
+project(Capy)
+
+# Añade todos los archivos fuente .cpp y .h en la carpeta actual
+file(GLOB SOURCES "*.cpp")
+file(GLOB HEADERS "*.h")
+
+# Crea el ejecutable utilizando los archivos fuente y de encabezado
+add_executable(capy ${SOURCES} ${HEADERS})
