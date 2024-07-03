@@ -58,9 +58,9 @@ int main(int argc, char *argv[]) {
             return 1;
         }
     }
-    printf("Sintaxis correcta\n");
-    asignacion(f); // Llamar al parser con el archivo f
     
+    asignacion(f); // Llamar al parser con el archivo f
+    printf("Sintaxis correcta\n");
 
     if (f != stdin) {
         fclose(f); // Cerrar el archivo solo si no es stdin
