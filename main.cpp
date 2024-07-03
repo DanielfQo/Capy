@@ -1,9 +1,12 @@
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
 
 #include "lexer.h"
+#include "parser.h"
+
 FILE *f;
 
 int main(int n, char *pal[])
@@ -38,3 +41,30 @@ int main(int n, char *pal[])
 
     return 0;
 }
+//*/
+
+#include <stdio.h>
+#include "parser.h"
+
+FILE *f;
+
+int main(int argc, char *argv[]) {
+    FILE *f = stdin; // Por defecto, leer de la entrada estándar
+
+    if (argc == 2) {
+        f = fopen(argv[1], "r"); // Intentar abrir el archivo especificado en argv[1]
+        if (f == NULL) {
+            perror("Error al abrir el archivo de entrada");
+            return 1;
+        }
+    }
+
+    asignacion(f); // Llamar al parser con el archivo f
+
+    if (f != stdin) {
+        fclose(f); // Cerrar el archivo solo si no es stdin
+    }
+
+    return 0;
+}
+
