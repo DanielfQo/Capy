@@ -6,8 +6,9 @@ void error() {
 }
 
 void asignacion(FILE *f) {
-    if (scanner(fgetc(f)) != ID) error();  
+    if (scanner(fgetc(f)) != ID) error(); 
     if (scanner(fgetc(f)) != '=') error();  
+    
     expresion(f);
 }
 

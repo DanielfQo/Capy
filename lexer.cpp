@@ -9,6 +9,12 @@ int scanner(int c){
     if (c == EOF)
         return EOF;
 
+    /*
+    do 
+        c=fgetc(f);
+    while(isspace(c));  
+    */
+    
     if (isalpha(c)) // Regla del ID
     {
         i = 0;
@@ -28,7 +34,7 @@ int scanner(int c){
 
     if (isdigit(c)) // Regla del NUM
     {
-        i = 0;
+        0;
         do
         {
             lexema[i++] = c;

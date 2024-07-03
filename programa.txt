@@ -1,3 +1,1 @@
-main :: IO ()
-main = putStrLn "Hola Mundo"
-x = 3 + 4 * (5 - 2);
+x=3

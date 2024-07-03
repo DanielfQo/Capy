@@ -58,13 +58,14 @@ int main(int argc, char *argv[]) {
             return 1;
         }
     }
-
+    printf("Sintaxis correcta\n");
     asignacion(f); // Llamar al parser con el archivo f
+    
 
     if (f != stdin) {
         fclose(f); // Cerrar el archivo solo si no es stdin
     }
-
+    
     return 0;
 }
 
