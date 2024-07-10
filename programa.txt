@@ -1,1 +1,4 @@
-hola = a + b;
+main :: IO ()
+a = 5
+b = 4;
+c = a + b;

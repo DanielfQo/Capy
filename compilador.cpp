@@ -14,6 +14,7 @@
 #define CASE 263
 #define OF 264
 #define LAMBDA 265
+#define IO 266
 
 #define ASIG '='
 #define IGUAL 266
@@ -182,7 +183,8 @@ int esPalabraReservada()
         return OF;
     if (strcmp(lexema, "\\") == 0)
         return LAMBDA;
-
+    if (strcmp(lexema, "IO") == 0)
+        return IO;
     return -1;
 }
 
@@ -224,6 +226,7 @@ void mostrar(int token)
 }
 
 void bloque();
+void funcion();
 void asignacion();
 void expresion();
 void termino();
@@ -236,9 +239,25 @@ void error() {
 }
 
 void bloque(){
-    while(1){
-        asignacion();
+    funcion();
+    asignacion();
+    if(scanner() == EOF) return;
+    else if(scanner() == ID){
+        ungetc(ID, f);
+        bloque();
     }
+    else{
+        ungetc(scanner(), f);
+        return;
+    }
+}
+
+void funcion(){
+    if(scanner() != ID) error();
+    if(scanner() != DOS_PUNTOS_DOS_PUNTOS) error();
+    if(scanner() != IO ) error();
+    if(scanner() != PARI) error();
+    if(scanner() != PARD) error();
 }
 
 void asignacion() {
@@ -296,7 +315,7 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    asignacion(); // Llamar al parser
+    bloque(); // Llamar al parser
     printf("Sintaxis correcta\n");
 
     if (f != stdin) {
