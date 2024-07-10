@@ -1,25 +1,17 @@
 #include "lexer.h"
 
-
 char lexema[80]; // Definición del arreglo lexema
 
-int scanner(int c){
+int scanner(int c) {
     int i;
-    
+
     if (c == EOF)
         return EOF;
 
-    /*
-    do 
-        c=fgetc(f);
-    while(isspace(c));  
-    */
-    
     if (isalpha(c)) // Regla del ID
     {
         i = 0;
-        do
-        {
+        do {
             lexema[i++] = c;
             c = fgetc(f);
         } while (isalnum(c) || c == '_');
@@ -34,9 +26,8 @@ int scanner(int c){
 
     if (isdigit(c)) // Regla del NUM
     {
-        0;
-        do
-        {
+        i = 0;
+        do {
             lexema[i++] = c;
             c = fgetc(f);
         } while (isdigit(c));
@@ -55,8 +46,7 @@ int scanner(int c){
     if (c == '>') // Regla de ">" o ">="
     {
         c = fgetc(f);
-        if (c == '=')
-        { // return MAYORIGUAL
+        if (c == '=') { // return MAYORIGUAL
             lexema[0] = '>';
             lexema[1] = '=';
             lexema[2] = 0;
@@ -69,8 +59,7 @@ int scanner(int c){
     if (c == '<') // Regla de "<" o "<="
     {
         c = fgetc(f);
-        if (c == '=')
-        { // return MENORIGUAL
+        if (c == '=') { // return MENORIGUAL
             lexema[0] = '<';
             lexema[1] = '=';
             lexema[2] = 0;
@@ -83,8 +72,7 @@ int scanner(int c){
     if (c == '=') // Regla de "=" o "=="
     {
         c = fgetc(f);
-        if (c == '=')
-        { // return IGUAL
+        if (c == '=') { // return IGUAL
             lexema[0] = '=';
             lexema[1] = '=';
             lexema[2] = 0;
@@ -97,7 +85,7 @@ int scanner(int c){
     if (c == '!') // Regla de "!="
     {
         c = fgetc(f);
-        if (c == '='){ // return DIFERENTE
+        if (c == '=') { // return DIFERENTE
             lexema[0] = '!';
             lexema[1] = '=';
             lexema[2] = 0;
@@ -120,11 +108,34 @@ int scanner(int c){
         return ':';
     }
 
+    if (c == '-') {
+        c = fgetc(f);
+        if (c == '>') {
+            lexema[0] = '-';
+            lexema[1] = '>';
+            lexema[2] = 0;
+            return FLECHA_FUNCION;
+        }
+        ungetc(c, f);
+        return RESTA;
+    }
+
+    if (c == '=') {
+        c = fgetc(f);
+        if (c == '>') {
+            lexema[0] = '=';
+            lexema[1] = '>';
+            lexema[2] = 0;
+            return FLECHA_TIPO;
+        }
+        ungetc(c, f);
+        return ASIG;
+    }
+
     return -1; // Si no se reconoce el carácter, devuelve un error
 } // Fin de scanner
 
-int esPalabraReservada()
-{
+int esPalabraReservada() {
     if (strcmp(lexema, "let") == 0)
         return LET;
     if (strcmp(lexema, "in") == 0)
@@ -141,14 +152,48 @@ int esPalabraReservada()
         return OF;
     if (strcmp(lexema, "\\") == 0)
         return LAMBDA;
+    if (strcmp(lexema, "where") == 0)
+        return WHERE;
+    if (strcmp(lexema, "do") == 0)
+        return DO;
+    if (strcmp(lexema, "deriving") == 0)
+        return DERIVING;
+    if (strcmp(lexema, "class") == 0)
+        return CLASS;
+    if (strcmp(lexema, "instance") == 0)
+        return INSTANCE;
+    if (strcmp(lexema, "type") == 0)
+        return TYPE;
+    if (strcmp(lexema, "module") == 0)
+        return MODULE;
+    if (strcmp(lexema, "newtype") == 0)
+        return NEWTYPE;
+    if (strcmp(lexema, "default") == 0)
+        return DEFAULT;
+    if (strcmp(lexema, "import") == 0)
+        return IMPORT;
+    if (strcmp(lexema, "infix") == 0)
+        return INFIX;
+    if (strcmp(lexema, "infixl") == 0)
+        return INFIXL;
+    if (strcmp(lexema, "infixr") == 0)
+        return INFIXR;
+    if (strcmp(lexema, "foreign") == 0)
+        return FOREIGN;
+    if (strcmp(lexema, "forall") == 0)
+        return FORALL;
+    if (strcmp(lexema, "mdo") == 0)
+        return MDO;
+    if (strcmp(lexema, "rec") == 0)
+        return REC;
+    if (strcmp(lexema, "proc") == 0)
+        return PROC;
 
     return -1;
 }
 
-void mostrar(int token)
-{
-    switch (token)
-    {
+void mostrar(int token) {
+    switch (token) {
         case ID: printf("token = ID [%s] \n", lexema); break;
         case NUM: printf("token = NUM [%s] \n", lexema); break;
         case LET: printf("token = LET [%s] \n", lexema); break;
@@ -159,6 +204,24 @@ void mostrar(int token)
         case CASE: printf("token = CASE [%s] \n", lexema); break;
         case OF: printf("token = OF [%s] \n", lexema); break;
         case LAMBDA: printf("token = LAMBDA [%s] \n", lexema); break;
+        case WHERE: printf("token = WHERE [%s] \n", lexema); break;
+        case DO: printf("token = DO [%s] \n", lexema); break;
+        case DERIVING: printf("token = DERIVING [%s] \n", lexema); break;
+        case CLASS: printf("token = CLASS [%s] \n", lexema); break;
+        case INSTANCE: printf("token = INSTANCE [%s] \n", lexema); break;
+        case TYPE: printf("token = TYPE [%s] \n", lexema); break;
+        case MODULE: printf("token = MODULE [%s] \n", lexema); break;
+        case NEWTYPE: printf("token = NEWTYPE [%s] \n", lexema); break;
+        case DEFAULT: printf("token = DEFAULT [%s] \n", lexema); break;
+        case IMPORT: printf("token = IMPORT [%s] \n", lexema); break;
+        case INFIX: printf("token = INFIX [%s] \n", lexema); break;
+        case INFIXL: printf("token = INFIXL [%s] \n", lexema); break;
+        case INFIXR: printf("token = INFIXR [%s] \n", lexema); break;
+        case FOREIGN: printf("token = FOREIGN [%s] \n", lexema); break;
+        case FORALL: printf("token = FORALL [%s] \n", lexema); break;
+        case MDO: printf("token = MDO [%s] \n", lexema); break;
+        case REC: printf("token = REC [%s] \n", lexema); break;
+        case PROC: printf("token = PROC [%s] \n", lexema); break;
         case PARI: printf("token = PARI [%c] \n", token); break;
         case PARD: printf("token = PARD [%c] \n", token); break;
         case MAYOR: printf("token = MAYOR [%c] \n", token); break;
@@ -178,6 +241,8 @@ void mostrar(int token)
         case DIV: printf("token = DIV [%c] \n", token); break;
         case MULT: printf("token = MULT [%c] \n", token); break;
         case DOS_PUNTOS_DOS_PUNTOS: printf("token = DOS_PUNTOS_DOS_PUNTOS [%s] \n", lexema); break;
+        case FLECHA_FUNCION: printf("token = FLECHA_FUNCION [%s] \n", lexema); break;
+        case FLECHA_TIPO: printf("token = FLECHA_TIPO [%s] \n", lexema); break;
         default: printf("no existe");
     }
 }

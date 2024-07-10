@@ -7,13 +7,12 @@
 #include <stdbool.h>
 #include "lexer.h"
 
+void programa(FILE *f);
+void declaracion(FILE *f);
 void asignacion(FILE *f);
 void expresion(FILE *f);
 void termino(FILE *f);
 void factor(FILE *f);
-void numero();
-void digito();
-void error();
-
+void error(const char *msg);
 
 #endif
