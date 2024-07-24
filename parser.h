@@ -1,18 +1,24 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <stdbool.h>
 #include "lexer.h"
 
-void programa(FILE *f);
-void declaracion(FILE *f);
-void asignacion(FILE *f);
-void expresion(FILE *f);
-void termino(FILE *f);
-void factor(FILE *f);
-void error(const char *msg);
+// Function prototypes for the parser
+void parseProgram();
+void parseDeclaration();
+void parseExpression();
+void parseSimpleExpression();
+void parseCompoundExpression();
+void parseFunctionApplication();
+void parseLambdaExpression();
+void parseIfExpression();
+void parseLetExpression();
+void parseInfixExpression();
+
+// Utility functions
+void match(int expectedToken);
+int getToken();
+
+extern int currentToken;
 
 #endif

@@ -5,6 +5,10 @@
 #include <ctype.h>
 #include <string.h>
 
+
+extern FILE *inputFile;
+extern FILE *outputFile;
+
 // Tokens de identificadores y números
 #define ID 256        // Identificador
 #define NUM 257       // Número
@@ -68,11 +72,10 @@
 #define MULT '*'  // *
 #define DIV '/'   // /
 
-extern int scanner(int c);
+extern int scanner(FILE *f);
 void mostrar(int);
 int esPalabraReservada();
 
-extern FILE *f;
 extern char lexema[80];
 
 #endif

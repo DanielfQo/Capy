@@ -1,71 +1,44 @@
-/*
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <stdbool.h>
-
 #include "lexer.h"
 #include "parser.h"
 
-FILE *f;
+FILE *inputFile;
+FILE *outputFile;
 
-int main(int n, char *pal[])
-{
-    int token;
-    f = stdin; // Entrada estándar del teclado
-    if (n == 2) // Si se especificó un archivo de lectura
-    {
-        f = fopen(pal[1], "rt"); // Lectura modo texto
-        if (f == NULL)
-            f = stdin;
-    }
-    if (f == stdin) // La lectura será desde la entrada estándar
-        printf("Ingrese texto ........ termine con Ctrl z \n");
-
-    int c;
-
-    while (1)
-    {
-        do
-            c = fgetc(f);
-        while (isspace(c));
-
-        token = scanner(c);
-        if (token == EOF)
-            break;
-        mostrar(token);
+int main() {
+    inputFile = fopen("input.txt", "r");
+    if (inputFile == NULL) {
+        printf("Error: Could not open input file\n");
+        exit(1);
     }
 
-    if (f != stdin) // Si la entrada fue de un archivo
-        fclose(f); // Entonces cerrar el archivo.
+    outputFile = fopen("tokens.txt", "w");
+    if (outputFile == NULL) {
+        printf("Error: Could not open output file\n");
+        exit(1);
+    }
+
+    // Run lexer
+    while (scanner(inputFile) != EOF);
+
+    fclose(inputFile);
+    fclose(outputFile);
+
+    // Open tokens file for reading
+    inputFile = fopen("tokens.txt", "r");
+    if (inputFile == NULL) {
+        printf("Error: Could not open tokens file\n");
+        exit(1);
+    }
+
+    // Run parser
+    currentToken = getToken();
+    parseProgram();
+
+    fclose(inputFile);
+
+    printf("Parsing completed successfully\n");
 
     return 0;
 }
-//*/
-
-#include <stdio.h>
-#include "parser.h"
-
-FILE *f;
-
-int main(int argc, char *argv[]) {
-    FILE *f = stdin; // Por defecto, leer de la entrada estándar
-
-    if (argc == 2) {
-        f = fopen(argv[1], "r"); // Intentar abrir el archivo especificado en argv[1]
-        if (f == NULL) {
-            perror("Error al abrir el archivo de entrada");
-            return 1;
-        }
-    }
-    
-    asignacion(f); // Llamar al parser con el archivo f
-    printf("Sintaxis correcta\n");
-
-    if (f != stdin) {
-        fclose(f); // Cerrar el archivo solo si no es stdin
-    }
-    
-    return 0;
-}
-

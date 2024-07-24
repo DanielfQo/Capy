@@ -1,0 +1,17 @@
+let x = 5 in x
+let y = True in y
+let z = x + 1 in z
+
+multiply :: Int -> Int -> Int
+multiply x y = x * y
+
+numbers :: [Int]
+numbers = [1, 2, 3, 4, 5]
+
+main :: IO ()
+main = do
+    let sumResult = add 3 5
+    let productResult = multiply 4 7
+    putStrLn ("La suma de 3 y 5 es: " ++ show sumResult)
+    putStrLn ("El producto de 4 y 7 es: " ++ show productResult)
+    putStrLn ("La lista de números es: " ++ show numbers)

@@ -1,2 +1,5 @@
 /build/
 *.o
+*.exe
+*.txt
+!input.txt
