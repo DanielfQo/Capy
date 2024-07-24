@@ -3,3 +3,4 @@
 *.exe
 *.txt
 !input.txt
+venv
