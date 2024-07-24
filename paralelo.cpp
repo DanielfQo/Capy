@@ -1,13 +1,35 @@
 #include <iostream>
 #include <sstream>
 #include <stack>
-#include <thread>
 #include <vector>
+#include <thread>
 #include <mutex>
-#include <future>
+#include <condition_variable>
+#include <string>
+#include <cctype>
+#include <functional>
+#include <queue>
 #include <stdexcept>
 
-std::mutex mtx;
+std::vector<std::string> split_expression(const std::string& expression) {
+    std::vector<std::string> result;
+    std::string temp;
+    for (char ch : expression) {
+        if (ch == '+' || ch == '-') {
+            if (!temp.empty()) {
+                result.push_back(temp);
+                temp.clear();
+            }
+            temp += ch;
+        } else {
+            temp += ch;
+        }
+    }
+    if (!temp.empty()) {
+        result.push_back(temp);
+    }
+    return result;
+}
 
 int precedence(char op) {
     if (op == '+' || op == '-') return 1;
@@ -15,89 +37,173 @@ int precedence(char op) {
     return 0;
 }
 
-int applyOp(int a, int b, char op) {
-    switch (op) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '*': return a * b;
-        case '/': return a / b;
-        default: throw std::runtime_error("Invalid operator");
-    }
-}
+// Función para convertir una expresión infija a postfija
+std::string infixToPostfix(const std::string& infix) {
+    std::stack<char> operators;
+    std::ostringstream postfix;
+    bool wasOperand = false;
+    std::string number;
 
-int evaluateExpression(std::string tokens) {
-    int i;
-    std::stack<int> values;
-    std::stack<char> ops;
+    for (size_t i = 0; i < infix.length(); ++i) {
+        char token = infix[i];
 
-    for (i = 0; i < tokens.length(); i++) {
-        if (tokens[i] == ' ') continue;
-        
-        if (tokens[i] == '(') {
-            ops.push(tokens[i]);
-        } else if (isdigit(tokens[i])) {
-            int val = 0;
-            while (i < tokens.length() && isdigit(tokens[i])) {
-                val = (val * 10) + (tokens[i] - '0');
-                i++;
-            }
-            values.push(val);
-            i--;
-        } else if (tokens[i] == ')') {
-            while (!ops.empty() && ops.top() != '(') {
-                int val2 = values.top(); values.pop();
-                int val1 = values.top(); values.pop();
-                char op = ops.top(); ops.pop();
-                values.push(applyOp(val1, val2, op));
-            }
-            if (!ops.empty()) ops.pop();
+        if (isspace(token)) {
+            continue;
+        } else if (isdigit(token)) {
+            number += token;
+            wasOperand = true;
         } else {
-            while (!ops.empty() && precedence(ops.top()) >= precedence(tokens[i])) {
-                int val2 = values.top(); values.pop();
-                int val1 = values.top(); values.pop();
-                char op = ops.top(); ops.pop();
-                values.push(applyOp(val1, val2, op));
+            if (wasOperand) {
+                postfix << number << ' ';
+                number.clear();
+                wasOperand = false;
             }
-            ops.push(tokens[i]);
+
+            if (token == '(') {
+                operators.push(token);
+            } else if (token == ')') {
+                while (!operators.empty() && operators.top() != '(') {
+                    postfix << operators.top() << ' ';
+                    operators.pop();
+                }
+                operators.pop();  // Pop the '('
+            } else {
+                while (!operators.empty() && precedence(operators.top()) >= precedence(token)) {
+                    postfix << operators.top() << ' ';
+                    operators.pop();
+                }
+                operators.push(token);
+            }
         }
     }
 
-    while (!ops.empty()) {
-        int val2 = values.top(); values.pop();
-        int val1 = values.top(); values.pop();
-        char op = ops.top(); ops.pop();
-        values.push(applyOp(val1, val2, op));
+    if (wasOperand) {
+        postfix << number << ' ';
     }
 
-    return values.top();
+    while (!operators.empty()) {
+        postfix << operators.top() << ' ';
+        operators.pop();
+    }
+
+    return postfix.str();
+}
+// Función para evaluar una expresión postfija secuencialmente
+int evaluarPosfijaPila(const std::string& expresion) {
+    std::stack<int> pila;
+    std::string token;
+    
+    std::istringstream stream(expresion);
+    
+    while (stream >> token) {
+        // Verifica si el token es un número entero
+        bool esNumero = true;
+        for (char c : token) {
+            if (!std::isdigit(c) && c != '-') {
+                esNumero = false;
+                break;
+            }
+        }
+        
+        if (esNumero) {
+            pila.push(std::stoi(token));
+        } else {
+            // De lo contrario, se asume que es un operador
+            int operando2 = pila.top(); pila.pop();
+            int operando1 = pila.top(); pila.pop();
+            int resultado;
+            
+            if (token == "+") {
+                resultado = operando1 + operando2;
+            } else if (token == "-") {
+                resultado = operando1 - operando2;
+            } else if (token == "*") {
+                resultado = operando1 * operando2;
+            } else if (token == "/") {
+                if (operando2 != 0) {
+                    resultado = operando1 / operando2;
+                } else {
+                    throw std::runtime_error("División por cero");
+                }
+            }
+            
+            pila.push(resultado);
+        }
+    }
+    
+    return pila.top();
+}
+// Mutex para la salida estándar
+std::mutex output_mutex;
+
+// Función para evaluar una expresión aritmética simple
+double evaluate_expression(const std::string& expression) {
+    std::istringstream iss(expression);
+    double result = 0.0;
+    double number;
+    char op = '+';
+    while (iss >> number) {
+        if (op == '+') {
+            result += number;
+        } else if (op == '-') {
+            result -= number;
+        } else if (op == '*') {
+            result *= number;
+        } else if (op == '/') {
+            if (number == 0) {
+                throw std::runtime_error("División por cero");
+            }
+            result /= number;
+        }
+        iss >> op;
+    }
+    return result;
 }
 
-void parallelEvaluate(std::vector<std::string> expressions, std::vector<int>& results, int index) {
-    results[index] = evaluateExpression(expressions[index]);
+double sumaParalela = 0;
+
+// Función que ejecuta la evaluación y muestra el resultado
+void process_expression(const std::vector<std::string>& expressions, int index) {
+    const std::string& expression = expressions[index];
+    try {
+        double result = evaluate_expression(expression);
+        sumaParalela += result;
+        std::lock_guard<std::mutex> lock(output_mutex);
+        std::cout << "Resultado de la expresión " << index << " (" << expression << "): " << result << std::endl;
+    } catch (const std::exception& e) {
+        std::lock_guard<std::mutex> lock(output_mutex);
+        std::cout << "Error al evaluar la expresión " << index << " (" << expression << "): " << e.what() << std::endl;
+    }
+}
+
+// Función para evaluar expresiones en paralelo
+void evaluarPosfijaParalelo(const std::vector<std::string>& expressions) {
+    std::vector<std::thread> threads;
+    for (int i = 0; i < expressions.size(); ++i) {
+        threads.emplace_back(process_expression, std::cref(expressions), i);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
 }
 
 int main() {
-    std::vector<std::string> expressions = {
-        "10 + 2 * 6",
-        "100 * 2 + 12",
-        "100 * ( 2 + 12 )",
-        "100 * ( 2 + 12 ) / 14"
-    };
+    std::string infix_expression = "15+2*4*5+4+8 "; // Ejemplo de expresión en notación infija
+    std::string postfix_expression = infixToPostfix(infix_expression);
+    std::cout << "Expresión infija: " << infix_expression << std::endl;
+    std::cout << "Expresión postfija: " << postfix_expression << std::endl;
 
-    std::vector<int> results(expressions.size());
-    std::vector<std::thread> threads;
+    double result1 = evaluarPosfijaPila(postfix_expression);
 
-    for (int i = 0; i < expressions.size(); i++) {
-        threads.emplace_back(parallelEvaluate, expressions, std::ref(results), i);
-    }
+    
+    std::vector<std::string> parts = split_expression(infix_expression);
+    
+    evaluarPosfijaParalelo(parts);
 
-    for (auto& th : threads) {
-        th.join();
-    }
-
-    for (int i = 0; i < results.size(); i++) {
-        std::cout << "Resultado de \"" << expressions[i] << "\": " << results[i] << std::endl;
-    }
+    
+    std::cout << "Resultado 1: " << result1 << std::endl;
+    std::cout << "Resultado 2: " << sumaParalela << std::endl;
 
     return 0;
 }
